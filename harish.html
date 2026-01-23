@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stock Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    @media (max-width: 900px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<h1>📈 Stock Market Dashboard</h1>
+
+<div class="dashboard">
+  <div class="card">
+    <canvas id="priceChart"></canvas>
+  </div>
+  <div class="card">
+    <canvas id="volumeChart"></canvas>
+  </div>
+</div>
+
+<div class="card">
+  <h3>📋 Stock Data Table</h3>
+  <table id="stockTable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Open</th>
+        <th>High</th>
+        <th>Low</th>
+        <th>Price</th>
+        <th>Volume</th>
+        <th>Change %</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+const data = [
+  {"Date":"21-01-2026","Price":132.5,"Open":127,"High":133.75,"Low":129.93,"Vol.":"127.61M","Change %":"5.28%"},
+  {"Date":"20-01-2026","Price":125.86,"Open":121.99,"High":126.9,"Low":120.2,"Vol.":"171.44M","Change %":"3.93%"},
+  {"Date":"19-01-2026","Price":121.1,"Open":119.15,"High":122.9,"Low":118.56,"Vol.":"91.48M","Change %":"2.82%"},
+  {"Date":"16-01-2026","Price":117.78,"Open":117.79,"High":118.4,"Low":117.04,"Vol.":"65.36M","Change %":"-0.19%"},
+  {"Date":"21-01-2027","Price":108.18,"Open":109.52,"High":109.75,"Low":108.24,"Vol.":"127.61M","Change %":"-0.91%"}
+];
+
+// Sort by date
+data.sort((a,b)=>new Date(a.Date)-new Date(b.Date));
+
+const labels = data.map(d => d.Date);
+const prices = data.map(d => d.Price);
+const volumes = data.map(d => parseFloat(d["Vol."]));
+
+// Price Chart
+new Chart(document.getElementById('priceChart'), {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [{
+      label: 'Closing Price',
+      data: prices,
+      tension: 0.3,
+      fill: true
+    }]
+  }
+});
+
+// Volume Chart
+new Chart(document.getElementById('volumeChart'), {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [{
+      label: 'Volume (M)',
+      data: volumes
+    }]
+  }
+});
+
+// Table
+const tbody = document.querySelector("#stockTable tbody");
+data.forEach(d => {
+  const row = `
+    <tr>
+      <td>${d.Date}</td>
+      <td>${d.Open}</td>
+      <td>${d.High}</td>
+      <td>${d.Low}</td>
+      <td>${d.Price}</td>
+      <td>${d["Vol."]}</td>
+      <td>${d["Change %"]}</td>
+    </tr>`;
+  tbody.innerHTML += row;
+});
+</script>
+
+</body>
+</html>
